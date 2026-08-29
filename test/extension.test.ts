@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { after, describe, it } from 'node:test'
-import { ServiceStat, services, workspace } from 'coc.nvim'
+import { commands, ServiceStat, services, workspace } from 'coc.nvim'
 import { getLanguageService } from 'vscode-html-languageservice'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import * as extension from '../src/index'
@@ -55,6 +55,22 @@ async function getHtmlClient() {
   }
   assert.ok(service.client, 'HTML language client is unavailable')
   return service.client
+}
+
+async function waitUntil(condition: () => boolean | Promise<boolean>, message: string, timeout = 10000): Promise<void> {
+  const deadline = Date.now() + timeout
+  while (Date.now() < deadline) {
+    if (await condition()) return
+    await new Promise(resolve => setTimeout(resolve, 50))
+  }
+  throw new Error(message)
+}
+
+async function waitForLine(expected: string): Promise<void> {
+  await waitUntil(
+    async () => await workspace.nvim.call('getline', [1]) === expected,
+    `line did not become ${JSON.stringify(expected)}`
+  )
 }
 
 describe('coc-html extension', () => {
@@ -111,5 +127,38 @@ describe('coc-html extension', () => {
     assert.match(value, /```typescript[\s\S]*greet[\s\S]*```/)
     assert.match(value, /Greets a person\./)
     assert.match(value, /@param[\s\S]*name[\s\S]*person to greet/)
+  })
+
+  it('completes and closes an HTML tag without an extra angle bracket', { timeout: 20000 }, async () => {
+    const document = await openHtml('auto-close-completion.html', '')
+    await getHtmlClient()
+
+    try {
+      await workspace.nvim.call('feedkeys', ['i<ht', 't'])
+      await waitForLine('<ht')
+      await document.synchronize()
+      await commands.executeCommand('editor.action.triggerSuggest')
+      await waitUntil(async () => {
+        if (await workspace.nvim.call('coc#pum#visible', []) !== 1) return false
+        const winid = await workspace.nvim.call('coc#pum#winid', []) as number
+        const words = await workspace.nvim.call('getwinvar', [winid, 'words']) as string[]
+        return words.includes('html')
+      }, 'HTML completion did not appear')
+      const winid = await workspace.nvim.call('coc#pum#winid', []) as number
+      const words = await workspace.nvim.call('getwinvar', [winid, 'words']) as string[]
+      await workspace.nvim.call('coc#pum#select', [words.indexOf('html'), 1, 0])
+      await waitForLine('<html')
+      await workspace.nvim.call('coc#pum#close', ['confirm'])
+      await waitUntil(
+        async () => await workspace.nvim.call('coc#pum#visible', []) === 0,
+        'HTML completion popup did not close after confirmation'
+      )
+      await waitForLine('<html')
+      await workspace.nvim.call('feedkeys', ['>', 't'])
+      await waitForLine('<html></html>')
+      assert.equal((await workspace.nvim.call('getline', [1]) as string).startsWith('<<'), false)
+    } finally {
+      await workspace.nvim.command('stopinsert')
+    }
   })
 })
