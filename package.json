@@ -1,11 +1,12 @@
 {
   "name": "coc-html",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Html extension for coc.nvim",
   "main": "lib/index.js",
   "publisher": "chemzqm",
   "engines": {
-    "coc": "^0.0.80"
+    "coc": "^0.0.80",
+    "node": ">=22"
   },
   "keywords": [
     "html",
@@ -14,7 +15,12 @@
   ],
   "scripts": {
     "build": "node esbuild.js",
-    "prepare": "node esbuild.js"
+    "lint": "tsc --noEmit",
+    "prepare": "node esbuild.js",
+    "test": "npm run test:integration:nvim && npm run test:integration:vim",
+    "test:integration": "node esbuild.js && coc-test \"test/**/*.test.ts\"",
+    "test:integration:nvim": "node esbuild.js && coc-test --nvim \"test/**/*.test.ts\"",
+    "test:integration:vim": "node esbuild.js && coc-test --vim \"test/**/*.test.ts\""
   },
   "activationEvents": [
     "*"
@@ -250,19 +256,26 @@
     "url": "git+https://github.com/neoclide/coc-html.git"
   },
   "devDependencies": {
-    "@types/node": "^12.12.0",
-    "coc.nvim": "^0.0.81-next.8",
-    "esbuild": "^0.14.7",
-    "vscode-css-languageservice": "^6.1.1",
-    "vscode-html-languageservice": "^5.0.2",
-    "vscode-languageserver": "^8.1.0-next.1",
-    "vscode-languageserver-textdocument": "^1.0.7",
-    "vscode-languageserver-types": "3.15.1",
-    "vscode-languageserver-protocol": "^3.17.2",
+    "@types/node": "^22.20",
+    "coc-test": "^0.2.0",
+    "coc.nvim": "^0.0.83-next.26",
+    "esbuild": "^0.28.0",
+    "vscode-css-languageservice": "^6.3.10",
+    "vscode-html-languageservice": "^5.6.2",
+    "vscode-languageserver": "^10.1.1",
+    "vscode-languageserver-protocol": "^3.18.3",
+    "vscode-languageserver-textdocument": "^1.0.14",
+    "vscode-languageserver-types": "3.18.3",
     "vscode-nls": "^5.2.0",
-    "vscode-uri": "^3.0.6"
+    "vscode-uri": "^3.2.0"
   },
   "dependencies": {
-    "typescript": "^4.3"
+    "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  },
+  "coc-test": {
+    "entryFile": "src/index.ts"
   }
 }

@@ -1,5 +1,7 @@
 # coc-html repository guidance
 
+Upstream local file location: /Users/chemzqm/lib/vscode/extensions/html-language-features
+
 ## Scope of this file
 
 Keep this file limited to facts and constraints specific to coc-html. General
@@ -35,12 +37,12 @@ duplicated here.
 
 ## Build and compatibility facts
 
-- This repository uses Yarn Classic and commits `yarn.lock`; do not introduce a
+- This repository uses npm and commits `package-lock.json`; do not introduce a
   second package manager or rewrite the lockfile with one.
-- The published coc.nvim compatibility is `^0.0.80`, and the bundle currently
-  targets Node.js 12.16. Do not rely on newer coc.nvim APIs or Node.js runtime
+- The published coc.nvim compatibility is `^0.0.80`, and the bundle targets
+  Node.js 22. Do not rely on newer coc.nvim APIs or Node.js runtime
   features without an explicit compatibility change.
 - `coc.nvim` and `typescript` are external to the bundle. Do not replace
   coc.nvim integration with a `vscode` runtime dependency.
-- There is currently no test script in `package.json`; do not report automated
-  test coverage unless a real test command has been added and run.
+- Integration tests use coc-test through the scripts in `package.json`; run
+  both the Vim and Neovim lanes for editor-facing changes.

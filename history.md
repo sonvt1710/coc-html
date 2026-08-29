@@ -1,3 +1,11 @@
+## 1.9.0
+
+- Require Node.js 22 and migrate development and CI workflows to npm.
+- Improve embedded CSS and JavaScript handling, including isolated validation for module scripts.
+- Include JSDoc summaries and tags in JavaScript hover content.
+- Improve language-server activation recovery and automatic-insertion cleanup.
+- Add Vim and Neovim integration tests.
+
 ## 1.8.0
 
 - Remove configuration `html.format.endWithNewline`>
