@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" width="128" height="128" alt="coc-html logo">
+</p>
+
 # coc-html
 
 [![CI](https://github.com/neoclide/coc-html/actions/workflows/ci.yml/badge.svg)](https://github.com/neoclide/coc-html/actions/workflows/ci.yml)
