@@ -18,9 +18,9 @@
     "lint": "tsc --noEmit",
     "prepare": "node esbuild.js",
     "test": "npm run test:integration:nvim && npm run test:integration:vim",
-    "test:integration": "node esbuild.js && coc-test \"test/**/*.test.ts\"",
-    "test:integration:nvim": "node esbuild.js && coc-test --nvim \"test/**/*.test.ts\"",
-    "test:integration:vim": "node esbuild.js && coc-test --vim \"test/**/*.test.ts\""
+    "test:integration": "coc-test \"test/**/*.test.ts\"",
+    "test:integration:nvim": "coc-test --nvim \"test/**/*.test.ts\"",
+    "test:integration:vim": "coc-test --vim \"test/**/*.test.ts\""
   },
   "activationEvents": [
     "*"
